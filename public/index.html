@@ -715,27 +715,27 @@
 
 <script>
 window.addEventListener('DOMContentLoaded', () => {
-  // 1. 保存sn/click_id到localStorage
+  // 1. 兼容入口参数sub1、sn、click_id，全部赋值给sn
   const urlParams = new URLSearchParams(window.location.search);
-  const sn = urlParams.get('sn') || urlParams.get('click_id');
+  const sn = urlParams.get('sn') || urlParams.get('sub1') || urlParams.get('click_id');
   if (sn) {
     localStorage.setItem('my_sn', sn);
   }
   const savedSn = localStorage.getItem('my_sn');
 
-  // 2. 给所有外链加sn参数（包括get-akusoli.com所有offer页）
+  // 2. 给所有offer链接加sn参数（不管原来有没有sub1）
   if (savedSn) {
-    // 选中所有跳转到get-akusoli.com的a标签
-    const offerLinks = document.querySelectorAll('a[href*="get-akusoli.com"]');
+    const offerLinks = document.querySelectorAll('a[href*="welnax.com"]');
     offerLinks.forEach(link => {
       link.addEventListener('click', function(e) {
-        // 动态拼接sn参数
         let url;
         try {
           url = new URL(link.href);
         } catch (err) {
           url = new URL(link.href, window.location.origin);
         }
+        // 移除原有sub1参数，强制用sn
+        url.searchParams.delete('sub1');
         url.searchParams.set('sn', savedSn);
         link.href = url.toString();
       });
