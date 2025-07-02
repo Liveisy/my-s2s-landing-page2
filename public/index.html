@@ -91,7 +91,7 @@
 			   </div>
 
             <div class="buttons">
-               <a id="purchase-button" class="button trial" href="https://get-akusoli.com/akusoli/product?prodpv=5&awlpv=0&_=8418&l=en&vndr=evf&evf=1&uid=6653&offid=64&affiliate_id=10">Free Trial</a>
+               <a id="purchase-button" class="button trial" href="https://www.welnax.com/me/new/Welnax/Neck-Massager/wish22808?">Free Trial</a>
              
                <a class="button learn-more smoothscroll" href="#features">Learn More</a>
             </div>
@@ -660,7 +660,7 @@
         const savedSub1 = localStorage.getItem('my_sub1');
         if (savedSub1) {
           // 支持多个offer域名可自行扩展
-          const offerLinks = document.querySelectorAll('a[href*="https://get-akusoli.com"]');
+          const offerLinks = document.querySelectorAll('a[href*="https://www.welnax.com"]');
           offerLinks.forEach(link => {
             let url;
             try {
@@ -715,28 +715,28 @@
 
 <script>
 window.addEventListener('DOMContentLoaded', () => {
-  // 1. 保存sub1/click_id到localStorage
+  // 1. 保存sn/click_id到localStorage
   const urlParams = new URLSearchParams(window.location.search);
-  const sub1 = urlParams.get('sub1') || urlParams.get('click_id');
-  if (sub1) {
-    localStorage.setItem('my_sub1', sub1);
+  const sn = urlParams.get('sn') || urlParams.get('click_id');
+  if (sn) {
+    localStorage.setItem('my_sn', sn);
   }
-  const savedSub1 = localStorage.getItem('my_sub1');
+  const savedSn = localStorage.getItem('my_sn');
 
-  // 2. 给所有外链加sub1参数（包括get-akusoli.com所有offer页）
-  if (savedSub1) {
+  // 2. 给所有外链加sn参数（包括get-akusoli.com所有offer页）
+  if (savedSn) {
     // 选中所有跳转到get-akusoli.com的a标签
     const offerLinks = document.querySelectorAll('a[href*="get-akusoli.com"]');
     offerLinks.forEach(link => {
       link.addEventListener('click', function(e) {
-        // 动态拼接sub1参数
+        // 动态拼接sn参数
         let url;
         try {
           url = new URL(link.href);
         } catch (err) {
           url = new URL(link.href, window.location.origin);
         }
-        url.searchParams.set('sub1', savedSub1);
+        url.searchParams.set('sn', savedSn);
         link.href = url.toString();
       });
     });
