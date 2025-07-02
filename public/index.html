@@ -713,6 +713,37 @@
       }
 </script>
 
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  // 1. 保存sub1/click_id到localStorage
+  const urlParams = new URLSearchParams(window.location.search);
+  const sub1 = urlParams.get('sub1') || urlParams.get('click_id');
+  if (sub1) {
+    localStorage.setItem('my_sub1', sub1);
+  }
+  const savedSub1 = localStorage.getItem('my_sub1');
+
+  // 2. 给所有外链加sub1参数（包括get-akusoli.com所有offer页）
+  if (savedSub1) {
+    // 选中所有跳转到get-akusoli.com的a标签
+    const offerLinks = document.querySelectorAll('a[href*="get-akusoli.com"]');
+    offerLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        // 动态拼接sub1参数
+        let url;
+        try {
+          url = new URL(link.href);
+        } catch (err) {
+          url = new URL(link.href, window.location.origin);
+        }
+        url.searchParams.set('sub1', savedSub1);
+        link.href = url.toString();
+      });
+    });
+  }
+});
+</script>
+
 </body>
 
 </html>
