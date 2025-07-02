@@ -647,104 +647,37 @@
    <script src="js/main.js"></script>
    
    <script>
-      // 进入页面时自动保存sub1/click_id到localStorage
+      // 只保留sn/click_id参数处理逻辑，彻底移除sub1相关代码
       window.addEventListener('DOMContentLoaded', () => {
+        // 只认sn和click_id参数
         const urlParams = new URLSearchParams(window.location.search);
-        // 支持sub1和click_id两种参数
-        const sub1 = urlParams.get('sub1') || urlParams.get('click_id');
-        if (sub1) {
-          localStorage.setItem('my_sub1', sub1);
+        const sn = urlParams.get('sn') || urlParams.get('click_id');
+        if (sn) {
+          localStorage.setItem('my_sn', sn);
         }
+        const savedSn = localStorage.getItem('my_sn');
 
-        // 每次页面加载都从localStorage补全所有offer链接的sub1参数
-        const savedSub1 = localStorage.getItem('my_sub1');
-        if (savedSub1) {
-          // 支持多个offer域名可自行扩展
-          const offerLinks = document.querySelectorAll('a[href*="https://www.welnax.com"]');
+        // 给所有welnax.com的a标签加sn参数
+        if (savedSn) {
+          const offerLinks = document.querySelectorAll('a[href*="welnax.com"]');
           offerLinks.forEach(link => {
-            let url;
-            try {
-              url = new URL(link.href);
-            } catch (e) {
-              // 兼容相对路径
-              url = new URL(link.href, window.location.origin);
-            }
-            url.searchParams.set('sub1', savedSub1);
-            link.href = url.toString();
+            link.addEventListener('click', function(e) {
+              let url;
+              try {
+                url = new URL(link.href);
+              } catch (err) {
+                url = new URL(link.href, window.location.origin);
+              }
+              // 只保留sn参数
+              url.searchParams.delete('sub1');
+              url.searchParams.set('sn', savedSn);
+              link.href = url.toString();
+            });
           });
         }
       });
     </script>
 
-<script>
-      // S2S追踪脚本
-      async function handlePurchaseClick(event) {
-        event.preventDefault();
-        const destinationUrl = event.currentTarget.href;
-        // 优先从localStorage取sub1/click_id
-        const clickId = localStorage.getItem('my_sub1') || new URLSearchParams(window.location.search).get('click_id');
-    
-        if (!clickId) {
-          console.log('Taboola Click ID not found. Redirecting normally.');
-          window.location.href = destinationUrl;
-          return;
-        }
-    
-        console.log('Click ID found. Calling S2S function...');
-    
-        try {
-          await fetch('/taboola-s2s', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ taboola_click_id: clickId }),
-          });
-        } catch (error) {
-          console.error('Error calling S2S function:', error);
-        } finally {
-          console.log('S2S process finished. Redirecting now...');
-          window.location.href = destinationUrl;
-        }
-      }
-    
-      // 确保您的购买按钮有 id="purchase-button"
-      const purchaseButton = document.getElementById('purchase-button'); 
-      if (purchaseButton) {
-        purchaseButton.addEventListener('click', handlePurchaseClick);
-      }
-</script>
-
-<script>
-window.addEventListener('DOMContentLoaded', () => {
-  // 1. 兼容入口参数sn、click_id，全部赋值给sn（彻底不再处理sub1）
-  const urlParams = new URLSearchParams(window.location.search);
-  const sn = urlParams.get('sn') || urlParams.get('click_id');
-  if (sn) {
-    localStorage.setItem('my_sn', sn);
-  }
-  const savedSn = localStorage.getItem('my_sn');
-
-  // 2. 给所有welnax.com的a标签加sn参数（不再处理sub1）
-  if (savedSn) {
-    const offerLinks = document.querySelectorAll('a[href*="welnax.com"]');
-    offerLinks.forEach(link => {
-      link.addEventListener('click', function(e) {
-        let url;
-        try {
-          url = new URL(link.href);
-        } catch (err) {
-          url = new URL(link.href, window.location.origin);
-        }
-        // 只保留sn参数
-        url.searchParams.delete('sub1');
-        url.searchParams.set('sn', savedSn);
-        link.href = url.toString();
-      });
-    });
-  }
-});
-</script>
-
-<!-- 如果页面内有静态写死的sub1参数，全部改成sn参数 -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('a[href*="sub1="]').forEach(function(link) {
