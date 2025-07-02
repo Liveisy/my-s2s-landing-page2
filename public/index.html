@@ -681,29 +681,35 @@
         purchaseButton.addEventListener('click', handlePurchaseClick);
       }
     </script>
+
 <script>
-   // 1. 从当前页面的URL中获取sub1的值
-   const urlParams = new URLSearchParams(window.location.search);
-   const sub1Value = urlParams.get('sub1');
- 
-   // 2. 只有当sub1存在时，才执行后续操作
-   if (sub1Value) {
-     // 3. 找到页面上所有指向DFO Offer的链接
-     //    请将 'dfo-offer-domain.com' 替换成您推广的Offer的真实域名
-     const offerLinks = document.querySelectorAll('a[href*="dfo-offer-domain.com"]');
- 
-     offerLinks.forEach(link => {
-       // 4. 在原有的链接后动态添加sub1参数
-       const originalHref = link.href;
-       // 检查链接是否已经有?
-       if (originalHref.includes('?')) {
-         link.href = originalHref + '&sub1=' + sub1Value;
-       } else {
-         link.href = originalHref + '?sub1=' + sub1Value;
-       }
-     });
-   }
- </script>
+  // 当页面加载完成后执行
+  window.addEventListener('DOMContentLoaded', (event) => {
+    // 1. 从当前页面的URL中获取Taboola的 "click_id" 的值
+    const urlParams = new URLSearchParams(window.location.search);
+    const taboolaClickId = urlParams.get('click_id'); // <--- 关键修改在这里！从'sub1'改为'click_id'
+
+    // 2. 只有当从Taboola获取到click_id时，才执行后续操作
+    if (taboolaClickId) {
+      console.log('Taboola Click ID found:', taboolaClickId);
+
+      // 3. 找到页面上所有指向DFO Offer的链接
+      //    请将 'dfo-offer-domain.com' 替换成您推广的Offer的真实域名
+      const offerLinks = document.querySelectorAll('a[href*="https://get-akusoli.com/"]');
+      
+      offerLinks.forEach(link => {
+        const originalHref = link.href;
+        const separator = originalHref.includes('?') ? '&' : '?';
+        
+        // 4. 将Taboola的click_id的值，赋值给发往DFO的sub1参数
+        link.href = originalHref + separator + 'sub1=' + encodeURIComponent(taboolaClickId);
+        console.log('Updated offer link:', link.href);
+      });
+    } else {
+      console.log('Taboola Click ID not found in URL.');
+    }
+  });
+</script>
 
 </body>
 
