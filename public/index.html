@@ -91,8 +91,7 @@
 			   </div>
 
             <div class="buttons">
-               <a id="purchase-button" class="button trial" href="	
-               https://www.welnax.com/me/new/Welnax/Neck-Massager/wish22808?">Free Trial</a>
+               <a id="purchase-button" class="button trial" href="https://get-akusoli.com/akusoli/product?prodpv=5&awlpv=0&_=8418&l=en&vndr=evf&evf=1&uid=6653&offid=64&affiliate_id=10">Free Trial</a>
              
                <a class="button learn-more smoothscroll" href="#features">Learn More</a>
             </div>
@@ -648,11 +647,42 @@
    <script src="js/main.js"></script>
    
    <script>
+      // 进入页面时自动保存sub1/click_id到localStorage
+      window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        // 支持sub1和click_id两种参数
+        const sub1 = urlParams.get('sub1') || urlParams.get('click_id');
+        if (sub1) {
+          localStorage.setItem('my_sub1', sub1);
+        }
+
+        // 每次页面加载都从localStorage补全所有offer链接的sub1参数
+        const savedSub1 = localStorage.getItem('my_sub1');
+        if (savedSub1) {
+          // 支持多个offer域名可自行扩展
+          const offerLinks = document.querySelectorAll('a[href*="https://get-akusoli.com"]');
+          offerLinks.forEach(link => {
+            let url;
+            try {
+              url = new URL(link.href);
+            } catch (e) {
+              // 兼容相对路径
+              url = new URL(link.href, window.location.origin);
+            }
+            url.searchParams.set('sub1', savedSub1);
+            link.href = url.toString();
+          });
+        }
+      });
+    </script>
+
+<script>
       // S2S追踪脚本
       async function handlePurchaseClick(event) {
         event.preventDefault();
         const destinationUrl = event.currentTarget.href;
-        const clickId = new URLSearchParams(window.location.search).get('click_id');
+        // 优先从localStorage取sub1/click_id
+        const clickId = localStorage.getItem('my_sub1') || new URLSearchParams(window.location.search).get('click_id');
     
         if (!clickId) {
           console.log('Taboola Click ID not found. Redirecting normally.');
@@ -663,8 +693,7 @@
         console.log('Click ID found. Calling S2S function...');
     
         try {
-          // *** 关键修改在这里！URL变得非常简洁 ***
-          await fetch('/taboola-s2s', { // 直接调用相对路径的函数
+          await fetch('/taboola-s2s', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ taboola_click_id: clickId }),
@@ -682,35 +711,6 @@
       if (purchaseButton) {
         purchaseButton.addEventListener('click', handlePurchaseClick);
       }
-    </script>
-
-<script>
-  // 当页面加载完成后执行
-  window.addEventListener('DOMContentLoaded', (event) => {
-    // 1. 从当前页面的URL中获取Taboola的 "click_id" 的值
-    const urlParams = new URLSearchParams(window.location.search);
-    const taboolaClickId = urlParams.get('click_id'); // <--- 关键修改在这里！从'sub1'改为'click_id'
-
-    // 2. 只有当从Taboola获取到click_id时，才执行后续操作
-    if (taboolaClickId) {
-      console.log('Taboola Click ID found:', taboolaClickId);
-
-      // 3. 找到页面上所有指向DFO Offer的链接
-      //    请将 'dfo-offer-domain.com' 替换成您推广的Offer的真实域名
-      const offerLinks = document.querySelectorAll('a[href*="https://www.welnax.com"]');
-      
-      offerLinks.forEach(link => {
-        const originalHref = link.href;
-        const separator = originalHref.includes('?') ? '&' : '?';
-        
-        // 4. 将Taboola的click_id的值，赋值给发往DFO的sub1参数
-        link.href = originalHref + separator + 'sub1=' + encodeURIComponent(taboolaClickId);
-        console.log('Updated offer link:', link.href);
-      });
-    } else {
-      console.log('Taboola Click ID not found in URL.');
-    }
-  });
 </script>
 
 </body>
