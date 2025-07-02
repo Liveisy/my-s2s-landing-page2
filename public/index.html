@@ -91,7 +91,7 @@
 			   </div>
 
             <div class="buttons">
-               <a id="purchase-button" class="button trial" href="https://www.welnax.com/me/new/Welnax/Neck-Massager/wish22808?">Free Trial</a>
+               <a id="purchase-button" class="button trial" href="https://www.welnax.com/me/new/Welnax/BioClear/view22809">Free Trial</a>
              
                <a class="button learn-more smoothscroll" href="#features">Learn More</a>
             </div>
@@ -715,15 +715,15 @@
 
 <script>
 window.addEventListener('DOMContentLoaded', () => {
-  // 1. 兼容入口参数sub1、sn、click_id，全部赋值给sn
+  // 1. 兼容入口参数sn、click_id，全部赋值给sn（彻底不再处理sub1）
   const urlParams = new URLSearchParams(window.location.search);
-  const sn = urlParams.get('sn') || urlParams.get('sub1') || urlParams.get('click_id');
+  const sn = urlParams.get('sn') || urlParams.get('click_id');
   if (sn) {
     localStorage.setItem('my_sn', sn);
   }
   const savedSn = localStorage.getItem('my_sn');
 
-  // 2. 给所有offer链接加sn参数（不管原来有没有sub1）
+  // 2. 给所有welnax.com的a标签加sn参数（不再处理sub1）
   if (savedSn) {
     const offerLinks = document.querySelectorAll('a[href*="welnax.com"]');
     offerLinks.forEach(link => {
@@ -734,13 +734,22 @@ window.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
           url = new URL(link.href, window.location.origin);
         }
-        // 移除原有sub1参数，强制用sn
+        // 只保留sn参数
         url.searchParams.delete('sub1');
         url.searchParams.set('sn', savedSn);
         link.href = url.toString();
       });
     });
   }
+});
+</script>
+
+<!-- 如果页面内有静态写死的sub1参数，全部改成sn参数 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('a[href*="sub1="]').forEach(function(link) {
+    link.href = link.href.replace(/sub1=/g, 'sn=');
+  });
 });
 </script>
 
