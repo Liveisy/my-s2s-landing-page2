@@ -91,7 +91,7 @@
 			   </div>
 
             <div class="buttons">
-               <a id="purchase-button" class="button trial" href="https://www.baidu.com">Free Trial</a>
+               <a id="purchase-button" class="button trial" href="https://get-akusoli.com/akusoli/product?prodpv=5&awlpv=0&_=8418&l=en&vndr=evf&evf=1&uid=6653&offid=64&affiliate_id=10">Free Trial</a>
                <a class="button learn-more smoothscroll" href="#features">Learn More</a>
             </div>
 
@@ -681,7 +681,29 @@
         purchaseButton.addEventListener('click', handlePurchaseClick);
       }
     </script>
-
+<script>
+   // 1. 从当前页面的URL中获取sub1的值
+   const urlParams = new URLSearchParams(window.location.search);
+   const sub1Value = urlParams.get('sub1');
+ 
+   // 2. 只有当sub1存在时，才执行后续操作
+   if (sub1Value) {
+     // 3. 找到页面上所有指向DFO Offer的链接
+     //    请将 'dfo-offer-domain.com' 替换成您推广的Offer的真实域名
+     const offerLinks = document.querySelectorAll('a[href*="dfo-offer-domain.com"]');
+ 
+     offerLinks.forEach(link => {
+       // 4. 在原有的链接后动态添加sub1参数
+       const originalHref = link.href;
+       // 检查链接是否已经有?
+       if (originalHref.includes('?')) {
+         link.href = originalHref + '&sub1=' + sub1Value;
+       } else {
+         link.href = originalHref + '?sub1=' + sub1Value;
+       }
+     });
+   }
+ </script>
 
 </body>
 
