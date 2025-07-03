@@ -91,7 +91,7 @@
 			   </div>
 
             <div class="buttons">
-               <a id="purchase-button" class="button trial" href="https://www.welnax.com/me/new/Welnax/BioClear/view22809">Free Trial</a>
+               <a id="purchase-button" class="button trial" href="https://www.welnax.com/me/new/Welnax/Neck-Massager/wish22808?">Free Trial</a>
              
                <a class="button learn-more smoothscroll" href="#features">Learn More</a>
             </div>
@@ -647,13 +647,12 @@
    <script src="js/main.js"></script>
 
 
-
    <script>
       // 当页面加载完成后执行
       window.addEventListener('DOMContentLoaded', (event) => {
         // 1. 从当前页面的URL中获取Taboola的 "click_id" 的值
         const urlParams = new URLSearchParams(window.location.search);
-        const taboolaClickId = urlParams.get('click_id'); // 接收 'click_id'
+        const taboolaClickId = urlParams.get('click_id'); 
     
         // 2. 只有当获取到Taboola的click_id时，才执行后续操作
         if (taboolaClickId) {
@@ -662,15 +661,14 @@
           // 3. 找到页面上所有指向DFO Offer的链接
           //    请将 'ryokorouter.com' 替换成您推广的Offer的真实域名
           const offerLinks = document.querySelectorAll('a[href*="https://www.welnax.com"]');
-          
+    
           offerLinks.forEach(link => {
             const originalHref = link.href;
             const separator = originalHref.includes('?') ? '&' : '?';
-            
-            // 4.【关键修改】将同一个ID，同时赋值给sn和sub1两个参数
-            const trackingParams = `sn=${encodeURIComponent(taboolaClickId)}&sub1=${encodeURIComponent(taboolaClickId)}`;
-            link.href = originalHref + separator + trackingParams;
-            console.log('Updated offer link (sending both sn and sub1):', link.href);
+    
+            // 4.【关键翻译步骤】将Taboola的click_id的值，赋值给发往DFO的sub2参数
+            link.href = originalHref + separator + 'sub2=' + encodeURIComponent(taboolaClickId); // <-- 核心修改！
+            console.log('Updated offer link (sending click_id as sub2):', link.href);
           });
         } else {
           console.log('Taboola Click ID not found in URL.');
