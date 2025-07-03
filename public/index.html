@@ -650,26 +650,27 @@
    <script>
       // 当页面加载完成后执行
       window.addEventListener('DOMContentLoaded', (event) => {
-        // 1. 从当前页面的URL中获取Taboola的 "click_id" 的值
         const urlParams = new URLSearchParams(window.location.search);
         const taboolaClickId = urlParams.get('click_id'); 
     
-        // 2. 只有当获取到Taboola的click_id时，才执行后续操作
         if (taboolaClickId) {
           console.log('Taboola Click ID found:', taboolaClickId);
     
-          // 3. 找到页面上所有指向DFO Offer的链接
-          //    请将 'ryokorouter.com' 替换成您推广的Offer的真实域名
-          const offerLinks = document.querySelectorAll('a[href*="https://www.djpcraze.com"]');
-    
-          offerLinks.forEach(link => {
-            const originalHref = link.href;
+          // 通过唯一的ID精确找到购买按钮
+          const purchaseButton = document.getElementById('purchase-button');
+          
+          if (purchaseButton) {
+            const originalHref = purchaseButton.href;
             const separator = originalHref.includes('?') ? '&' : '?';
-    
-            // 4.【关键翻译步骤】将Taboola的click_id的值，赋值给发往DFO的sub2参数
-            link.href = originalHref + separator + 'sub2=' + encodeURIComponent(taboolaClickId); // <-- 核心修改！
-            console.log('Updated offer link (sending click_id as sub2):', link.href);
-          });
+            
+            // 将Taboola的click_id的值，赋值给发往DFO的sub2参数
+            const newHref = originalHref + separator + 'sub2=' + encodeURIComponent(taboolaClickId);
+            
+            purchaseButton.href = newHref;
+            console.log('Successfully updated the link for #purchase-button:', newHref);
+          } else {
+            console.error('Error: Could not find the element with id="purchase-button"!');
+          }
         } else {
           console.log('Taboola Click ID not found in URL.');
         }
